@@ -3,7 +3,7 @@ import {TextField,Button} from '@material-ui/core';
 import InputUser from "./components/inputUser/InputUser"
 import classes from './App.module.css';
 import io from 'socket.io-client';
-const socket = io.connect('http://localhost:8000/');
+const socket = io.connect(`http://localhost:${process.env.PORT}/`);
 function App(props){
   const [chats,setChats] = useState([]);
   const [open,setOpen] = useState(true);

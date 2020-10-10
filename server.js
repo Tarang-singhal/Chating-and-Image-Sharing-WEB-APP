@@ -1,4 +1,5 @@
-const app = require('express')();
+const express = require('express');
+const app = express();
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
 const bodyParser = require("body-parser");
@@ -29,11 +30,6 @@ var findUser = (u)=>{
     else
         return (false);
 }
-
-app.get('/',(req,res)=>{
-    res.send("Hello world!");
-})
-
 
 io.on('connection', (client) => {
     // console.log('a user connected')

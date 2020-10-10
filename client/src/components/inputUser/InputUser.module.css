@@ -1,0 +1,16 @@
+.Modal {
+    display: flex;
+    justify-content: center;
+    max-width: 280px;
+    margin: auto;
+    height: 150px;
+}
+
+.Paper {
+    padding: 20px 25px;
+    outline: none;
+}
+
+.Form {
+    text-align: center;
+}

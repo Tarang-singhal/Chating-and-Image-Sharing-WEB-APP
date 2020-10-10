@@ -1,0 +1,42 @@
+.Box {
+    width: 100%;
+}
+
+.inputFriend {
+    margin: 20px auto;
+    width: 80%;
+    background-color: #eee;
+    border-radius: 5px;
+    padding: 10px 10px;
+    padding-bottom: 40px;
+}
+
+.Form {
+    /* margin: 4px auto; */
+    width: 90%;
+    /* /* display: flex; */
+    /* flex-direction: column; */
+    justify-content: center;
+    align-content: center;
+    padding-left: 5%;
+}
+
+.friend {
+    width: 50%;
+}
+
+.message_field {
+    overflow-y: auto;
+    width: 100%;
+}
+
+.send {
+    margin-top: 50px;
+    width: 100%;
+}
+
+.currUser {
+    text-align: center;
+    height: 60px;
+    font-size: 40px;
+}

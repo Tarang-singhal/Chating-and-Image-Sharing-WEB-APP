@@ -35,12 +35,11 @@ function App(props){
       ref3.current.value='';
       return;
     }
-    socket.emit('friend',({phone:number}));
     var message = ref3.current.value;
-    ref3.current.value='';
+    socket.emit('friend',({f:{phone:number},c:{chat:message,sender:currUser,receiver:number}}));
     var arr = [...chats,{chat:message,sender:currUser,receiver:number}];
     setChats(arr);
-    socket.emit('message',({chat:message,sender:currUser,receiver:number}));
+    ref3.current.value='';
   }
 
   // const submit4 = (event)=>{

@@ -41,11 +41,12 @@ io.on('connection', (client) => {
     });
 
 
-    client.on('friend',(f)=>{
+    client.on('friend',(obj)=>{
+        // console.log(obj);
         new Promise((resolve,reject)=>{
-            User.findOne(f).populate('chats').exec((err,userFound)=>{
+            User.findOne(obj.f).populate('chats').exec((err,userFound)=>{
                 if(!userFound){
-                    User.create(f,(err,newFriend)=>{
+                    User.create(obj.f,(err,newFriend)=>{
                         // console.log(newUser);
                         resolve(newFriend);
                     });
@@ -54,21 +55,19 @@ io.on('connection', (client) => {
                 }
             })
         }).then((friend)=>{
-            client.on('message',(c)=>{
-                if(c.sender!==c.receiver){
-                    Chat.create(c,(err,newChat)=>{
-                        currUser.chats.push(newChat);
-                        friend.chats.push(newChat);
-                        currUser.save();
-                        friend.save()
-                        .then(()=>{
-                            client.to(friend.id).emit('addChat',c);
-                        });
-                    })
-                }}
-                
-                )
-        });
+            c = obj.c;
+            if(c.sender!==c.receiver){
+                Chat.create(c,(err,newChat)=>{
+                    currUser.chats.push(newChat);
+                    friend.chats.push(newChat);
+                    currUser.save();
+                    friend.save()
+                    .then(()=>{
+                        client.to(friend.id).emit('addChat',c);
+                    });
+                });
+            }}
+        );
     });
 
     client.on('disconnect', () => {

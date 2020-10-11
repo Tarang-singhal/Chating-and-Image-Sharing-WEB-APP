@@ -41,9 +41,9 @@ function App(props){
       ref3.current.value='';
       return;
     }
+    var message = ref3.current.value;
     socket.emit('friend',({phone:number}))
     .then(()=>{
-      var message = ref3.current.value;
       socket.emit('message',({chat:message}));
       ref3.current.value='';
     });

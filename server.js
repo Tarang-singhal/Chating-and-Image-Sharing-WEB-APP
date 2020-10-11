@@ -9,6 +9,7 @@ const { success, error } = require('consola');
 require('./database/connection');
 const User = require('./database/models/user');
 const Chat = require('./database/models/chat');
+const { resolve } = require('path');
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,26 +39,22 @@ io.on('connection', (client) => {
             }
         });
     });
-    
-    var friend;
+
+
     client.on('friend',(f)=>{
-        User.findOne(f).populate('chats').exec((err,userFound)=>{
-            if(!userFound){
-                User.create(f,(err,newUser)=>{
-                    // console.log(newUser);
-                    friend = newUser;
-                });
-            }else{
-                friend = userFound;
-            }
-        });
-        client.on('message',(c)=>{
-            User.findOne({phone:friend.phone},(err,fri)=>{
-                if(fri)
-                    friend = fri;
-                else
-                    console.log('friend not find!');
-            }).then(()=>{
+        new Promise((resolve,reject)=>{
+            User.findOne(f).populate('chats').exec((err,userFound)=>{
+                if(!userFound){
+                    User.create(f,(err,newFriend)=>{
+                        // console.log(newUser);
+                        resolve(newFriend);
+                    });
+                }else{
+                    resolve(userFound);
+                }
+            })
+        }).then((friend)=>{
+            client.on('message',(c)=>{
                 if(c.sender!==c.receiver){
                     Chat.create(c,(err,newChat)=>{
                         currUser.chats.push(newChat);
@@ -68,10 +65,10 @@ io.on('connection', (client) => {
                             client.to(friend.id).emit('addChat',c);
                         });
                     })
-                }
-            })
+                }}
+                
+                )
         });
-
     });
 
     client.on('disconnect', () => {

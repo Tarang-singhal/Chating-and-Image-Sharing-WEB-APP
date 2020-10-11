@@ -13,26 +13,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var users = [];
-var createUser = (id,user)=>{
-    return {
-        phone: user.phone,
-        id: id
-    }
-}
-var findUser = (u)=>{
-    var userFound = users.find(user=>{
-        return user.phone === u.phone;
-    });
-    if(userFound){
-        return userFound;
-    }
-    else
-        return (false);
-}
-
 io.on('connection', (client) => {
-    // console.log('a user connected')
     var currUser;
     client.on('addUser',(U)=>{
         User.findOne(U).populate('chats').exec((err,userFound)=>{
@@ -48,7 +29,7 @@ io.on('connection', (client) => {
                 userFound.id = client.id;
                 userFound.save()
                 .then(()=>{
-                    var y = userFound.chats.map((chat)=>chat.chat);
+                    var y = userFound.chats.map((chat)=>chat);
                     client.emit('addChats',y);
                     // console.log(userFound);
                     currUser=userFound;
@@ -74,23 +55,23 @@ io.on('connection', (client) => {
     });
 
     client.on('message',async (C)=>{
-        await User.findOne({phone:friend.phone},(err,fri)=>{
+        await User.findOne({_id:friend._id},(err,fri)=>{
             friend = fri;
         });
         var c = {...C};
         c.sender = currUser.phone;
         // console.log(friend);
         c.receiver = friend.phone;
-        await Chat.create(c,(err,newChat)=>{
-            currUser.chats.push(newChat);
-            friend.chats.push(newChat);
-            friend.save();
-            currUser.save();
-            // console.log(currUser);
-            // console.log(friend);
-        });
-        client.to(friend.id).emit('addChat',C.chat);
-    })
+        if(c.sender!==c.receiver){
+            await Chat.create(c,(err,newChat)=>{
+                currUser.chats.push(newChat);
+                friend.chats.push(newChat);
+                friend.save();
+                currUser.save();
+            });
+            client.to(friend.id).emit('addChat',c);   
+        }
+    });
 
     client.on('disconnect', () => {
         // console.log('a user disconnected');

@@ -1,42 +1,44 @@
-.Box {
-    width: 100%;
-}
-
 .inputFriend {
     margin: 20px auto;
-    width: 80%;
+    width: 60%;
     background-color: #eee;
     border-radius: 5px;
     padding: 10px 10px;
-    padding-bottom: 40px;
+    padding-bottom: 20px;
 }
 
 .Form {
     /* margin: 4px auto; */
     width: 90%;
-    /* /* display: flex; */
-    /* flex-direction: column; */
-    justify-content: center;
-    align-content: center;
     padding-left: 5%;
 }
 
 .friend {
-    width: 50%;
+    width: 60%;
+    max-width: 300px;
 }
 
 .message_field {
+    margin-top: 10px !important;
     overflow-y: auto;
     width: 100%;
 }
 
 .send {
-    margin-top: 50px;
-    width: 100%;
+    margin-top: 10px !important;
+    width: 60%;
+    max-width: 300px;
 }
 
 .currUser {
     text-align: center;
-    height: 60px;
-    font-size: 40px;
+    height: 30px;
+    font-size: 25px;
+}
+
+@media (max-width: 530px) {
+    .inputFriend {
+        width: 80%;
+        padding-bottom: 20px;
+    }
 }

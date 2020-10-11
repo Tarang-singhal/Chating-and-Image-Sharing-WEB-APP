@@ -40,8 +40,8 @@ io.on('connection', (client) => {
     });
     
     var friend;
-    client.on('friend',(f)=>{
-        User.findOne(f).populate('chats').exec((err,userFound)=>{
+    client.on('friend',async(f)=>{
+        await User.findOne(f).populate('chats').exec((err,userFound)=>{
             if(!userFound){
                 User.create(f,(err,newUser)=>{
                     // console.log(newUser);
@@ -55,8 +55,11 @@ io.on('connection', (client) => {
     });
 
     client.on('message',async (C)=>{
-        await User.findOne({_id:friend._id},(err,fri)=>{
-            friend = fri;
+        await User.findOne({phone:friend.phone},(err,fri)=>{
+            if(fri)
+                friend = fri;
+            else
+                console.log('friend not find!');
         });
         var c = {...C};
         c.sender = currUser.phone;

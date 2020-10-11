@@ -34,6 +34,8 @@ function App(props){
       ref2.current.value='';
       ref3.current.value='';
       return;
+    }else{
+      socket.emit('friend',({phone:number}));
     }
     if(number===currUser){
       alert("Can't send on same number");
@@ -42,11 +44,12 @@ function App(props){
       return;
     }
     var message = ref3.current.value;
-    socket.emit('friend',({phone:number}))
-    socket.emit('message',({chat:message}));
     ref3.current.value='';
     var arr = [...chats,{chat:message,sender:currUser,receiver:number}];
     setChats(arr);
+    setTimeout(()=>{
+      socket.emit('message',({chat:message}));
+    },10);
   }
 
   // const submit4 = (event)=>{

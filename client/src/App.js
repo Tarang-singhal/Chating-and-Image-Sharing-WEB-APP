@@ -35,7 +35,7 @@ function App(props){
       ref3.current.value='';
       return;
     }
-    var message = ref3.current.value;
+    var message = ref3.current.value.trim();
     socket.emit('friend',({f:{phone:number},c:{chat:message,sender:currUser,receiver:number}}));
     var arr = [...chats,{chat:message,sender:currUser,receiver:number}];
     setChats(arr);

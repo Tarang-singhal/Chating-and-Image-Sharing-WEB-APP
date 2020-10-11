@@ -9,6 +9,7 @@ li {
     font-size: 14px;
     font-family: 'Chilanka', cursive;
     color: darkslategray;
+    white-space: pre-line;
 }
 
 .user {

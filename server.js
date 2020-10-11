@@ -22,17 +22,14 @@ io.on('connection', (client) => {
                 var u = {...U};
                 u.id = client.id;
                 User.create(u,(err,newUser)=>{
-                    // console.log(newUser);
                     currUser=newUser;
                 });
             }else{
-                // console.log(userFound.chats);
                 userFound.id = client.id;
                 userFound.save()
                 .then(()=>{
                     var y = userFound.chats.map((chat)=>chat);
                     client.emit('addChats',y);
-                    // console.log(userFound);
                     currUser=userFound;
                 });
                 
@@ -42,12 +39,10 @@ io.on('connection', (client) => {
 
 
     client.on('friend',(obj)=>{
-        // console.log(obj);
         new Promise((resolve,reject)=>{
             User.findOne(obj.f).populate('chats').exec((err,userFound)=>{
                 if(!userFound){
                     User.create(obj.f,(err,newFriend)=>{
-                        // console.log(newUser);
                         resolve(newFriend);
                     });
                 }else{

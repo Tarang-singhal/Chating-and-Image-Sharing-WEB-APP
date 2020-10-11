@@ -40,8 +40,8 @@ io.on('connection', (client) => {
     });
     
     var friend;
-    client.on('friend',async(f)=>{
-        await User.findOne(f).populate('chats').exec((err,userFound)=>{
+    client.on('friend',(f)=>{
+        User.findOne(f).populate('chats').exec((err,userFound)=>{
             if(!userFound){
                 User.create(f,(err,newUser)=>{
                     // console.log(newUser);
@@ -51,29 +51,27 @@ io.on('connection', (client) => {
                 friend = userFound;
             }
         });
-
-    });
-
-    client.on('message',async (C)=>{
-        await User.findOne({phone:friend.phone},(err,fri)=>{
-            if(fri)
-                friend = fri;
-            else
-                console.log('friend not find!');
+        client.on('message',(c)=>{
+            User.findOne({phone:friend.phone},(err,fri)=>{
+                if(fri)
+                    friend = fri;
+                else
+                    console.log('friend not find!');
+            }).then(()=>{
+                if(c.sender!==c.receiver){
+                    Chat.create(c,(err,newChat)=>{
+                        currUser.chats.push(newChat);
+                        friend.chats.push(newChat);
+                        currUser.save();
+                        friend.save()
+                        .then(()=>{
+                            client.to(friend.id).emit('addChat',c);
+                        });
+                    })
+                }
+            })
         });
-        var c = {...C};
-        c.sender = currUser.phone;
-        // console.log(friend);
-        c.receiver = friend.phone;
-        if(c.sender!==c.receiver){
-            await Chat.create(c,(err,newChat)=>{
-                currUser.chats.push(newChat);
-                friend.chats.push(newChat);
-                friend.save();
-                currUser.save();
-            });
-            client.to(friend.id).emit('addChat',c);   
-        }
+
     });
 
     client.on('disconnect', () => {

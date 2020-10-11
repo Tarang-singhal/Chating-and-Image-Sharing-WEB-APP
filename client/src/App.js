@@ -29,27 +29,18 @@ function App(props){
   const submit3 = (event) =>{
     event.preventDefault();
     var number = Number(ref2.current.value.trim());
-    if(number<1000000000 || number>9999999999){
-      alert("Invalid Friend number\nRange allowed:(1111111111-9999999999)");
-      ref2.current.value='';
-      ref3.current.value='';
-      return;
-    }else{
-      socket.emit('friend',({phone:number}));
-    }
-    if(number===currUser){
-      alert("Can't send on same number");
+    if(number<1000000000 || number>9999999999 || number===currUser){
+      alert("Invalid Friend number or Same number Error\nRange allowed:(1111111111-9999999999)");
       ref2.current.value='';
       ref3.current.value='';
       return;
     }
+    socket.emit('friend',({phone:number}));
     var message = ref3.current.value;
     ref3.current.value='';
     var arr = [...chats,{chat:message,sender:currUser,receiver:number}];
     setChats(arr);
-    setTimeout(()=>{
-      socket.emit('message',({chat:message}));
-    },10);
+    socket.emit('message',({chat:message,sender:currUser,receiver:number}));
   }
 
   // const submit4 = (event)=>{

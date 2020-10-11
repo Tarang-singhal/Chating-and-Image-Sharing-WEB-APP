@@ -12,7 +12,7 @@ function App(props){
   const [userRef] = useState(React.createRef());
   const [ref2] = useState(React.createRef());
   const [ref3] = useState(React.createRef());
-
+  
   const submit = (event) =>{
     event.preventDefault();
     var number = Number(userRef.current.value.trim());
@@ -37,14 +37,26 @@ function App(props){
     }
     var message = ref3.current.value.trim();
     socket.emit('friend',({f:{phone:number},c:{chat:message,sender:currUser,receiver:number}}));
-    var arr = [...chats,{chat:message,sender:currUser,receiver:number}];
+    var arr = [...chats,{chat:message,sender:Number(currUser),receiver:number}];
     setChats(arr);
     ref3.current.value='';
   }
-
-  // const submit4 = (event)=>{
-  //   event.preventDefault();
-  // }
+  const imageHandler = (event)=>{
+    var x = document.getElementById('image');
+      var number = Number(ref2.current.value.trim());
+      if(!number || number<1000000000 || number>9999999999 || number===currUser){
+        alert("Invalid Friend number or Same number Error\nRange allowed:(1111111111-9999999999)");
+        ref2.current.value='';
+        ref3.current.value='';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function() {
+        const base64 = this.result.replace(/.*base64,/, '');
+        socket.emit('image', {b:base64,sender:Number(currUser),receiver:number});
+      };
+      reader.readAsDataURL(x.files[0]);
+  }
 
   socket.on('addChats',(c)=>{
     var arr = [...c];
@@ -53,6 +65,10 @@ function App(props){
   socket.on('addChat',(c)=>{
     var arr = [...chats,c];
     setChats(arr);
+  })
+  socket.on('getImage',(image)=>{
+    var img = document.getElementById('img');
+    img.src = `data:image/jpg;base64,${image}`; 
   })
 
   return (
@@ -67,15 +83,15 @@ function App(props){
           <TextField required rows={2} className={classes.message_field} multiline label="message" variant='filled' inputRef={ref3}/>    
           <Button className={classes.send} color='primary' variant='contained' type="submit">Send</Button>
         </form>
-        {/* <form onSubmit={submit4} encType='multipart/form-data'>
-          <input required type="file" accept="image/jpeg, image/png, image/gif"/>
-          <button type='submit'>submit</button>
-        </form> */}
+        <form className={classes.Form}>
+          <button style={{marginTop:'10px',}}><label htmlFor="image">Send Image</label></button>
+          <input onChange={imageHandler} style={{opacity:0,width:'1px'}} required id='image' type="file" accept="image/jpeg, image/png, image/gif"/>
+        </form>
       </div>
 
 
       <Inbox chats={chats} sender={currUser}/>
-    
+      <img id='img' alt='img'/>
     </div>
   );
 }

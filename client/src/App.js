@@ -43,10 +43,8 @@ function App(props){
     }
     var message = ref3.current.value;
     socket.emit('friend',({phone:number}))
-    .then(()=>{
-      socket.emit('message',({chat:message}));
-      ref3.current.value='';
-    });
+    socket.emit('message',({chat:message}));
+    ref3.current.value='';
     var arr = [...chats,{chat:message,sender:currUser,receiver:number}];
     setChats(arr);
   }

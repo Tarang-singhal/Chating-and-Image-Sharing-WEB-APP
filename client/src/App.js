@@ -83,7 +83,7 @@ function App(props){
           <TextField required rows={2} className={classes.message_field} multiline label="message" variant='filled' inputRef={ref3}/>    
           <Button className={classes.send} color='primary' variant='contained' type="submit">Send</Button>
         </form>
-        <form className={classes.Form}>
+        <form onSubmit={(e)=>{e.preventDefault()}} className={classes.Form}>
           <button style={{marginTop:'10px',}}><label htmlFor="image">Send Image</label></button>
           <input onChange={imageHandler} style={{opacity:0,width:'1px'}} required id='image' type="file" accept="image/jpeg, image/png, image/gif"/>
         </form>

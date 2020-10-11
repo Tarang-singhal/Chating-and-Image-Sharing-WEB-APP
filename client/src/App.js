@@ -18,7 +18,7 @@ function App(props){
     event.preventDefault();
     // console.log(number);
     var number = Number(userRef.current.value.trim());
-    if(number<1111111111 || number>9999999999){
+    if(number<1000000000 || number>9999999999){
       alert("Invalid number\nRange allowed:(1111111111-9999999999)");
       userRef.current.value='';
       return;
@@ -31,7 +31,7 @@ function App(props){
   const submit3 = (event) =>{
     event.preventDefault();
     var number = Number(ref2.current.value.trim());
-    if(number<1111111111 || number>9999999999){
+    if(number<1000000000 || number>9999999999){
       alert("Invalid Friend number\nRange allowed:(1111111111-9999999999)");
       ref2.current.value='';
       ref3.current.value='';

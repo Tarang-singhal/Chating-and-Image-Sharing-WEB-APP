@@ -5,7 +5,7 @@ import Inbox from "./components/inbox/inbox"
 import classes from './App.module.css';
 import io from 'socket.io-client';
 
-const socket = io.connect("http://localhost:8000/");
+const socket = io.connect();
 function App(props){
   const [chats,setChats] = useState([]);
   const [open,setOpen] = useState(true);

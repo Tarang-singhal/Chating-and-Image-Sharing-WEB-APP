@@ -4,7 +4,6 @@ import InputUser from "./components/inputUser/InputUser";
 import Inbox from "./components/inbox/inbox"
 import classes from './App.module.css';
 import io from 'socket.io-client';
-
 const socket = io.connect();
 function App(props){
   const [chats,setChats] = useState([]);
@@ -16,7 +15,6 @@ function App(props){
 
   const submit = (event) =>{
     event.preventDefault();
-    // console.log(number);
     var number = Number(userRef.current.value.trim());
     if(number<1000000000 || number>9999999999){
       alert("Invalid number\nRange allowed:(1111111111-9999999999)");
@@ -45,16 +43,15 @@ function App(props){
     }
     socket.emit('friend',({phone:number}));
     var message = ref3.current.value;
-    // console.log(number);
     socket.emit('message',({chat:message}));
     ref3.current.value='';
-    var arr = [...chats,{chat:message,sender:currUser}];
+    var arr = [...chats,{chat:message,sender:currUser,receiver:number}];
     setChats(arr);
   }
 
-  const submit4 = (event)=>{
-    event.preventDefault();
-  }
+  // const submit4 = (event)=>{
+  //   event.preventDefault();
+  // }
 
   socket.on('addChats',(c)=>{
     var arr = [...c];

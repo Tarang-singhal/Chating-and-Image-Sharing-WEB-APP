@@ -43,6 +43,7 @@ io.on('connection', (client) => {
                 userFound.id = client.id;
                 userFound.save()
                 .then(()=>{
+                    currUser=userFound;
 
                     // send previous chats and images on the client side
                     var y = userFound.chats.map((chat)=>chat);
@@ -56,7 +57,6 @@ io.on('connection', (client) => {
 
                     //sending images
                     client.emit('addPhotos',z);
-                    currUser=userFound;
                 });
             }
         });

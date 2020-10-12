@@ -54,6 +54,18 @@ function App(props){
         ref3.current.value='';
         return;
       }
+      if (x.files.length > 0) { 
+        for (let i = 0; i <= x.files.length - 1; i++) { 
+
+            const fsize = x.files.item(i).size; 
+            const file = Math.round((fsize / 1024)); 
+            // The size of the file. 
+            if (file >= 2048) {
+                alert("File too Big, please select a file less than 2mb"); 
+                return;
+            }
+        } 
+    } 
       const reader = new FileReader();
       reader.onload = function() {
         const base64 = this.result.replace(/.*base64,/, '');

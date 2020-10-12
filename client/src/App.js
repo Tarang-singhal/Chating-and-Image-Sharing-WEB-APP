@@ -1,19 +1,23 @@
 import React,{useState} from 'react';
-import {TextField,Button} from '@material-ui/core';
 import InputUser from "./components/inputUser/InputUser";
-import Inbox from "./components/inbox/inbox"
+import Form from './components/Form/form';
+import Inbox from "./components/inbox/inbox";
+import Photos from './components/photos/photos';
+import Bar from './components/bar/bar';
 import classes from './App.module.css';
 import io from 'socket.io-client';
 const socket = io.connect();
 function App(props){
   const [chats,setChats] = useState([]);
+  const [photos,setPhotos] = useState([]);
   const [open,setOpen] = useState(true);
+  const [showChat,setShowChat] = useState(true);
   const [currUser,setCurrUser] = useState('');
   const [userRef] = useState(React.createRef());
   const [ref2] = useState(React.createRef());
   const [ref3] = useState(React.createRef());
   
-  const submit = (event) =>{
+  const addNewUser = (event) =>{
     event.preventDefault();
     var number = Number(userRef.current.value.trim());
     if(number<1000000000 || number>9999999999){
@@ -26,7 +30,7 @@ function App(props){
     setOpen(false);
   }
 
-  const submit3 = (event) =>{
+  const sendChat = (event) =>{
     event.preventDefault();
     var number = Number(ref2.current.value.trim());
     if(number<1000000000 || number>9999999999 || number===currUser){
@@ -58,40 +62,45 @@ function App(props){
       reader.readAsDataURL(x.files[0]);
   }
 
+  var arrChats = [];
   socket.on('addChats',(c)=>{
-    var arr = [...c];
-    setChats(arr);
-  })
+    arrChats = [...c];
+    // console.log(arrChats);
+  });
+  socket.on('addPhotos',(p)=>{
+    var arrPhotos = [...p];
+    setChats(arrChats);
+    setPhotos(arrPhotos);
+  });
   socket.on('addChat',(c)=>{
     var arr = [...chats,c];
     setChats(arr);
-  })
-  socket.on('getImage',(image)=>{
-    var img = document.getElementById('img');
-    img.src = `data:image/jpg;base64,${image}`; 
-  })
+  });
+  socket.on('addPhoto',(image)=>{ 
+    var arrPhotos = [...photos,image];
+    setPhotos(arrPhotos);
+  });
+  const handleChange1 = ()=>{
+    setShowChat(true);
+  };
+  const handleChange2 = ()=>{
+    setShowChat(false);
+  };
 
   return (
     <div>
-      <InputUser submit={submit} Ref={userRef} open={open}/>
-      <p className={classes.currUser}>
-        {currUser}
-      </p>
-      <div className={classes.inputFriend}>
-        <form className={classes.Form} onSubmit={submit3}>
-          <TextField className={classes.friend} id="friend" size='small' required label="Friend no." placeholder="XXXXXXXXXX" inputProps={{type:"tel",minLength:10,maxLength:10,pattern:"[0-9]{10}"}} inputRef={ref2}/>
-          <TextField required rows={2} className={classes.message_field} multiline label="message" variant='filled' inputRef={ref3}/>    
-          <Button className={classes.send} color='primary' variant='contained' type="submit">Send</Button>
-        </form>
-        <form onSubmit={(e)=>{e.preventDefault()}} className={classes.Form}>
-          <button style={{marginTop:'10px',}}><label htmlFor="image">Send Image</label></button>
-          <input onChange={imageHandler} style={{opacity:0,width:'1px'}} required id='image' type="file" accept="image/jpeg, image/png, image/gif"/>
-        </form>
-      </div>
+      <InputUser submit={addNewUser} Ref={userRef} open={open}/>
+      <p className={classes.currUser}>{currUser}</p>
+      <Form submit3={sendChat} imageHandler={imageHandler} ref2={ref2} ref3={ref3} />
+      <Bar showChat={showChat} handleChange2={handleChange2} handleChange1={handleChange1}/>
 
+      {
+        showChat?
+        <Inbox chats={chats} sender={currUser}/>
+        :
+        <Photos photos={photos} />
+      }
 
-      <Inbox chats={chats} sender={currUser}/>
-      <img id='img' alt='img'/>
     </div>
   );
 }

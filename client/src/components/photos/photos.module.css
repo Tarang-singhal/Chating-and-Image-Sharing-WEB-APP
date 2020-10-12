@@ -1,4 +1,4 @@
-.inbox {
+.box {
     margin: 20px auto;
     width: 60%;
     background-color: #eee;
@@ -18,13 +18,14 @@
     height: 220px;
     overflow-y: scroll;
     display: flex;
-    flex-direction: column;
     padding-top: 10px;
-    scroll-behavior: smooth;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 @media (max-width: 530px) {
-    .inbox {
+    .box {
         width: 80%;
         padding-bottom: 20px;
     }

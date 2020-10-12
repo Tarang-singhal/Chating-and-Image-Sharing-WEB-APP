@@ -9,4 +9,4 @@ var imageSchema = new mongoose.Schema({
     receiver:Number
 });
 
-module.exports = new mongoose.model('Image', imageSchema);
+module.exports = new mongoose.model('images', imageSchema);

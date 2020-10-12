@@ -7,37 +7,26 @@ const cors = require('cors');
 const { PORT } = require('./config/index');
 const { success } = require('consola');
 const fs = require('fs');
-const multer = require('multer');
 require('./database/connection');
 const User = require('./database/models/user');
 const Chat = require('./database/models/chat');
 const Image = require('./database/models/image');
-const { Socket } = require('net');
 
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-var storage = multer.diskStorage({ 
-    destination: (req, file, cb) => { 
-        cb(null, 'uploads') 
-    }, 
-    filename: (req, file, cb) => { 
-        cb(null, file.fieldname + '-' + Date.now()) 
-    } 
-}); 
-var upload = multer({ storage: storage }); 
-
 io.on('connection', (client) => {
     var currUser;
 
     client.on('addUser',(U)=>{
-        User.findOne(U).populate('chats').exec((err,userFound)=>{
+        User.findOne(U).populate('images').populate('chats').exec((err,userFound)=>{
             if(!userFound){
                 var u = {...U};
                 u.id = client.id;
                 User.create(u,(err,newUser)=>{
                     currUser=newUser;
+                    console.log(currUser);
                 });
             }else{
                 userFound.id = client.id;
@@ -45,9 +34,12 @@ io.on('connection', (client) => {
                 .then(()=>{
                     var y = userFound.chats.map((chat)=>chat);
                     client.emit('addChats',y);
+                    var z = userFound.images.map((image)=> {
+                        return {buffer:image.img.data.toString('base64'),sender:image.sender,receiver:image.receiver};
+                    });
+                    client.emit('addPhotos',z);
                     currUser=userFound;
                 });
-                
             }
         });
     });
@@ -105,16 +97,13 @@ io.on('connection', (client) => {
                         
                     }
                 };
-                Image.create(obj,(err,item)=>{
+                Image.create(obj,(err,image)=>{
                     if(err){
                         console.log(err);
                     }
-                    currUser.images.push(item);
-                    currUser.save();
-                    friend.images.push(item);
+                    friend.images.push(image);
                     friend.save();
-                    console.log('done!');
-                    client.to(friend.id).emit('getImage',item.img.data.toString('base64'));
+                    client.to(friend.id).emit('addPhoto',{buffer:image.img.data.toString('base64'),sender:image.sender,receiver:image.receiver});
                 });
             });
         })

@@ -1,0 +1,55 @@
+.inputFriend {
+    margin: 20px auto;
+    width: 60%;
+    background-color: #eee;
+    padding: 10px 10px;
+    padding-bottom: 20px;
+}
+
+.message_field {
+    margin-top: 10px !important;
+    overflow-y: auto;
+    width: 100%;
+}
+
+.send {
+    margin-top: 10px !important;
+    width: 60%;
+    max-width: 300px;
+}
+
+.Form {
+    /* margin: 4px auto; */
+    width: 90%;
+    padding-left: 5%;
+}
+
+.friend {
+    width: 60%;
+    max-width: 300px;
+}
+
+.sendImage {
+    border: none;
+    border-radius: 5px;
+    text-transform: lowercase;
+    background-color: rgb(240, 240, 240);
+    box-shadow: 0px 4px 5px #aaa;
+}
+
+.sendImage:hover {
+    background-color: rgb(204, 200, 200);
+}
+
+.sendImage:focus {
+    border: none;
+    outline: none;
+    box-shadow: 0px 2px 3px #aaa;
+}
+
+@media (max-width: 530px) {
+    .inputFriend {
+        width: 80%;
+        padding-bottom: 20px;
+    }
+}

@@ -40,11 +40,12 @@ function App(props){
       return;
     }
     var message = ref3.current.value.trim();
-    socket.emit('friend',({f:{phone:number},c:{chat:message,sender:currUser,receiver:number}}));
+    socket.emit('friend',({f:{phone:number},c:{chat:message,sender:Number(currUser),receiver:number}}));
     var arr = [...chats,{chat:message,sender:Number(currUser),receiver:number}];
     setChats(arr);
     ref3.current.value='';
   }
+
   const imageHandler = (event)=>{
     var x = document.getElementById('image');
       var number = Number(ref2.current.value.trim());

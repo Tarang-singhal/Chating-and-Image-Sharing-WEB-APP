@@ -34,16 +34,12 @@ io.on('connection', (client) => {
                 var u = {...U};
                 u.id = client.id;
                 //creating newUser if it is not present
-                User.create(u,(err,newUser)=>{
-                    currUser=newUser;
-                    console.log(currUser);
-                });
+                User.create(u);
             }else{
                 // if present
                 userFound.id = client.id;
                 userFound.save()
                 .then(()=>{
-                    currUser=userFound;
 
                     // send previous chats and images on the client side
                     var y = userFound.chats.map((chat)=>chat);
@@ -79,22 +75,21 @@ io.on('connection', (client) => {
             })
         }).then((friend)=>{
             c = obj.c;
-            if(c.sender!==c.receiver){
-
+            User.findOne({phone:c.sender},((err,userFound)=>{
+                
                 //creating chat
                 Chat.create(c,(err,newChat)=>{
-                    currUser.chats.push(newChat);
+                    userFound.chats.push(newChat);
                     friend.chats.push(newChat);
-                    currUser.save();
+                    userFound.save();
                     friend.save()
                     .then(()=>{
-
                         // sending chat to friend
                         client.to(friend.id).emit('addChat',c);
                     });
                 });
-            }}
-        );
+            }))
+        });
     });
 
     //this will recieve image from currUser
